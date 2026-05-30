@@ -5,133 +5,94 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Window Weather</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
-  --bg: #0d1117;
-  --card: #161b22;
-  --border: #30363d;
+  --bg: #0a0e13;
+  --card: #131920;
+  --border: #252d38;
   --text: #e6edf3;
-  --muted: #8b949e;
+  --muted: #7a8694;
   --green: #3fb950;
   --yellow: #d29922;
   --red: #f85149;
   --accent: #58a6ff;
-  --ripple-color: transparent;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-html, body {
-  width: 100%; height: 100%;
-  overflow: hidden;
-}
+html, body { width: 100%; height: 100%; overflow: hidden; }
 
 body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 18px 20px;
   position: relative;
 }
 
-/* ── RIPPLE BACKGROUND ── */
+/* ── RIPPLE ── */
 .ripple-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; overflow: hidden;
 }
-
 .ripple-circle {
-  position: absolute;
-  border-radius: 50%;
+  position: absolute; border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);
   opacity: 0;
-  width: 200vmax;
-  height: 200vmax;
+  width: 200vmax; height: 200vmax;
   top: 50%; left: 50%;
 }
-
 .ripple-circle.animate-out {
-  animation: rippleOut 2.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: rippleOut 2.2s cubic-bezier(0.22,1,0.36,1) forwards;
 }
-
 @keyframes rippleOut {
-  0%   { transform: translate(-50%, -50%) scale(0); opacity: 0.18; }
+  0%   { transform: translate(-50%,-50%) scale(0); opacity: 0.18; }
   60%  { opacity: 0.10; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
 }
-
-/* Continuous slow pulse when window open + bad */
 .ripple-circle.pulse-bad {
   animation: pulseBad 3s ease-in-out infinite;
 }
-
 @keyframes pulseBad {
-  0%   { transform: translate(-50%, -50%) scale(0);    opacity: 0; }
+  0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0; }
   30%  { opacity: 0.13; }
-  100% { transform: translate(-50%, -50%) scale(0.9);  opacity: 0; }
+  100% { transform: translate(-50%,-50%) scale(0.9); opacity: 0; }
 }
 
-/* Subtle ambient glow always on */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
+  position: fixed; inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(88,166,255,0.05) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(63,185,80,0.03) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
+    radial-gradient(ellipse 70% 50% at 50% 0%,   rgba(88,166,255,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 100%,  rgba(63,185,80,0.03)  0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 
-/* ── NIGHT DIM OVERLAY ── */
+/* ── NIGHT OVERLAY ── */
 #night-overlay {
-  position: fixed;
-  inset: 0;
-  background: #000;
+  position: fixed; inset: 0; background: #000;
   z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
   transition: opacity 1.4s ease;
 }
-
-#night-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-#night-overlay.peeking {
-  opacity: 0.05;
-  pointer-events: all;
-}
+#night-overlay.active  { opacity: 1; pointer-events: all; }
+#night-overlay.peeking { opacity: 0.05; pointer-events: all; }
 
 .night-btn {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
+  width: 72px; height: 72px; border-radius: 50%;
   border: 1.5px solid rgba(255,255,255,0.15);
   background: rgba(255,255,255,0.04);
   color: rgba(255,255,255,0.35);
-  font-size: 28px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-size: 28px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
   transition: all 0.4s ease;
-  box-shadow: 0 0 30px rgba(255,255,255,0.04);
 }
-
 #night-overlay.active .night-btn {
   border-color: rgba(255,255,255,0.3);
   background: rgba(255,255,255,0.07);
@@ -139,93 +100,90 @@ body::before {
   box-shadow: 0 0 40px rgba(255,255,255,0.08);
 }
 
-/* ── MAIN CONTAINER ── */
+/* ── CONTAINER ── */
 .container {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  position: relative;
-  z-index: 1;
-  transition: opacity 0.6s ease;
+  width: 100%; max-width: 580px;
+  display: flex; flex-direction: column;
+  gap: 14px;
+  position: relative; z-index: 1;
 }
 
 /* ── HEADER ── */
 .header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
-
 .location {
-  font-size: 13px;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 500;
+  font-size: 12px; color: var(--muted);
+  letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
 }
-
+.header-right {
+  display: flex; flex-direction: column;
+  align-items: flex-end; gap: 6px;
+}
 .time-display {
-  font-size: 13px;
-  color: var(--muted);
+  font-size: 13px; color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
+.controls { display: flex; gap: 7px; align-items: center; }
 
-.controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-}
-
-/* ── TEMP CARD ── */
-.temp-card {
+/* ── HERO TEMP ── */
+.hero {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px 32px;
+  border-radius: 24px;
+  padding: 28px 24px 22px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 6px;
   transition: border-color 0.8s ease, box-shadow 0.8s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-emoji {
+  font-size: 52px;
+  line-height: 1;
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 4px 16px rgba(255,255,255,0.07));
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
 }
 
 .temp-big {
   font-family: 'DM Serif Display', serif;
-  font-size: 88px;
-  line-height: 1;
-  letter-spacing: -2px;
+  font-size: 148px;
+  line-height: 0.9;
+  letter-spacing: -4px;
   transition: color 1s ease;
+  text-align: center;
 }
-
 .temp-unit {
-  font-size: 30px;
-  color: var(--muted);
-  vertical-align: super;
   font-family: 'DM Serif Display', serif;
-}
-
-.feels-like {
-  font-size: 13px;
+  font-size: 48px;
+  vertical-align: super;
   color: var(--muted);
-  font-weight: 300;
-  margin-top: 6px;
+  letter-spacing: 0;
 }
 
-.temp-emoji {
-  font-size: 72px;
-  line-height: 1;
-  filter: drop-shadow(0 4px 20px rgba(255,255,255,0.08));
-  animation: float 4s ease-in-out infinite;
-  transition: filter 0.5s ease;
+.hero-sub {
+  display: flex; gap: 18px; align-items: center;
+  margin-top: 4px;
 }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-8px); }
+.feels-like {
+  font-size: 13px; color: var(--muted); font-weight: 300;
+}
+.description {
+  font-size: 13px; color: var(--muted);
+  text-transform: capitalize;
+}
+.hero-divider {
+  width: 1px; height: 12px;
+  background: var(--border);
 }
 
 /* ── STATUS CARD ── */
@@ -233,112 +191,77 @@ body::before {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 18px 24px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  padding: 16px 22px;
+  display: flex; align-items: center; gap: 12px;
   transition: border-color 0.8s ease;
 }
-
 .status-dot {
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  flex-shrink: 0;
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
   transition: background 0.8s ease, box-shadow 0.8s ease;
   animation: dotPulse 2s ease-in-out infinite;
 }
-
 @keyframes dotPulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.65; transform: scale(1.25); }
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.6; transform:scale(1.3); }
 }
-
 .status-text {
   font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  font-style: italic;
-  flex: 1;
-  transition: color 0.6s ease;
+  font-size: 19px; font-style: italic; flex: 1;
 }
 
-/* ── WINDOW TOGGLE BUTTON ── */
-.window-toggle-wrap {
-  display: flex;
-  justify-content: center;
-}
+/* ── WINDOW TOGGLE ── */
+.window-toggle-wrap { display: flex; justify-content: center; }
 
 .window-toggle-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 32px;
+  display: flex; align-items: center; gap: 12px;
+  padding: 15px 28px;
   border-radius: 100px;
   border: 1.5px solid var(--border);
   background: var(--card);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 15px; font-weight: 500;
   cursor: pointer;
-  overflow: hidden;
   transition: border-color 0.5s ease, background 0.5s ease, box-shadow 0.5s ease, transform 0.15s ease;
   -webkit-appearance: none;
 }
-
-.window-toggle-btn:active {
-  transform: scale(0.96);
-}
+.window-toggle-btn:active { transform: scale(0.96); }
 
 .window-toggle-btn.open {
   border-color: var(--green);
-  background: rgba(63,185,80,0.08);
-  box-shadow: 0 0 24px rgba(63,185,80,0.15), inset 0 0 20px rgba(63,185,80,0.05);
+  background: rgba(63,185,80,0.07);
+  box-shadow: 0 0 22px rgba(63,185,80,0.14);
 }
-
 .window-toggle-btn.open.warning {
   border-color: var(--yellow);
-  background: rgba(210,153,34,0.10);
-  box-shadow: 0 0 28px rgba(210,153,34,0.2), inset 0 0 20px rgba(210,153,34,0.06);
-  animation: btnFlash 1.8s ease-in-out infinite;
+  background: rgba(210,153,34,0.09);
+  box-shadow: 0 0 26px rgba(210,153,34,0.18);
+  animation: btnFlashY 1.8s ease-in-out infinite;
 }
-
 .window-toggle-btn.open.danger {
   border-color: var(--red);
-  background: rgba(248,81,73,0.10);
-  box-shadow: 0 0 28px rgba(248,81,73,0.2), inset 0 0 20px rgba(248,81,73,0.06);
-  animation: btnFlash 1.2s ease-in-out infinite;
+  background: rgba(248,81,73,0.09);
+  box-shadow: 0 0 26px rgba(248,81,73,0.18);
+  animation: btnFlashR 1.2s ease-in-out infinite;
 }
-
-@keyframes btnFlash {
-  0%, 100% { box-shadow: 0 0 20px rgba(var(--flash-rgb),0.15); }
-  50%       { box-shadow: 0 0 48px rgba(var(--flash-rgb),0.4); }
+@keyframes btnFlashY {
+  0%,100% { box-shadow: 0 0 18px rgba(210,153,34,0.12); }
+  50%      { box-shadow: 0 0 44px rgba(210,153,34,0.38); }
 }
-
-.window-toggle-btn.open.warning { --flash-rgb: 210,153,34; }
-.window-toggle-btn.open.danger  { --flash-rgb: 248,81,73; }
+@keyframes btnFlashR {
+  0%,100% { box-shadow: 0 0 18px rgba(248,81,73,0.12); }
+  50%      { box-shadow: 0 0 44px rgba(248,81,73,0.38); }
+}
 
 .win-icon {
-  font-size: 24px;
+  font-size: 22px;
   transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
-
-.window-toggle-btn.open .win-icon {
-  transform: rotate(-8deg) scale(1.1);
-}
-
-.win-label {
-  transition: color 0.4s ease;
-}
+.window-toggle-btn.open .win-icon { transform: rotate(-8deg) scale(1.1); }
 
 .win-status-badge {
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 10px; padding: 3px 9px; border-radius: 100px;
+  font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
   transition: all 0.4s ease;
 }
 
@@ -347,241 +270,180 @@ body::before {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  padding: 18px 22px;
+  display: flex; flex-direction: column; gap: 10px;
 }
-
 .bar-label {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 500;
+  font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); font-weight: 500;
 }
-
 .bar-track {
-  position: relative;
-  height: 16px;
-  border-radius: 100px;
+  position: relative; height: 15px; border-radius: 100px;
+  /* Symmetric: red both ends, green in middle */
   background: linear-gradient(to right,
-    #1d6af0 0%, #2196f3 12%, #4caf50 28%, #3fb950 45%,
-    #8bc34a 60%, #ffc107 72%, #ff9800 82%, #f44336 92%, #b71c1c 100%
+    #b71c1c  0%,
+    #f85149  8%,
+    #ff9800 18%,
+    #ffc107 28%,
+    #8bc34a 38%,
+    #3fb950 50%,
+    #8bc34a 62%,
+    #ffc107 72%,
+    #ff9800 82%,
+    #f85149 92%,
+    #b71c1c 100%
   );
   overflow: visible;
 }
-
 .bar-arrow-wrap {
-  position: absolute;
-  top: -10px;
+  position: absolute; top: -9px;
   transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: flex; flex-direction: column; align-items: center;
   transition: left 1.2s cubic-bezier(0.34,1.2,0.64,1);
 }
-
 .bar-arrow {
   width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 13px solid white;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 12px solid white;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.6));
 }
-
 .bar-arrow-line {
-  width: 2px; height: 24px;
-  background: rgba(255,255,255,0.35);
+  width: 2px; height: 20px;
+  background: rgba(255,255,255,0.3);
 }
-
 .bar-markers {
-  display: flex;
-  justify-content: space-between;
+  display: flex; justify-content: space-between;
 }
-
 .bar-marker {
-  font-size: 10px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  text-align: center;
+  font-size: 10px; color: var(--muted);
+  font-variant-numeric: tabular-nums; text-align: center;
 }
 
-/* ── DETAILS ROW ── */
+/* ── DETAILS ── */
 .details-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
 }
-
 .detail-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  transition: border-color 0.6s ease;
+  border-radius: 14px; padding: 13px;
+  display: flex; flex-direction: column; gap: 4px;
 }
-
-.detail-icon { font-size: 18px; }
-
+.detail-icon  { font-size: 17px; }
 .detail-value {
   font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  line-height: 1;
+  font-size: 19px; line-height: 1;
   transition: color 0.6s ease;
 }
-
 .detail-label {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
 }
 
 /* ── FOOTER ── */
 .footer {
-  text-align: center;
-  font-size: 11px;
-  color: var(--muted);
-  opacity: 0.5;
+  text-align: center; font-size: 10px;
+  color: var(--muted); opacity: 0.45;
 }
 
-/* ── UNIT TOGGLE & REFRESH ── */
-.unit-toggle {
-  display: inline-flex;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.unit-toggle button {
-  background: none;
-  border: none;
-  color: var(--muted);
-  padding: 5px 11px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
+/* ── BUTTONS ── */
+.refresh-btn {
+  background: none; border: 1px solid var(--border);
+  border-radius: 8px; color: var(--muted);
+  padding: 5px 10px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 12px;
   transition: all 0.2s;
 }
-
-.unit-toggle button.active {
-  background: var(--accent);
-  color: white;
-}
-
-.refresh-btn {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--muted);
-  padding: 5px 11px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  transition: all 0.25s;
-}
-
 .refresh-btn:active { border-color: var(--accent); color: var(--accent); }
 
 /* ── LOADING / ERROR ── */
 .loading-msg {
-  text-align: center;
-  color: var(--muted);
-  font-size: 15px;
-  padding: 40px;
+  text-align: center; color: var(--muted);
+  font-size: 15px; padding: 40px;
   animation: fadeIn 0.5s ease;
 }
-
 .error-msg {
   background: rgba(248,81,73,0.1);
   border: 1px solid rgba(248,81,73,0.3);
-  border-radius: 12px;
-  padding: 16px 20px;
-  color: #f85149;
-  font-size: 14px;
-  line-height: 1.5;
+  border-radius: 12px; padding: 16px 20px;
+  color: #f85149; font-size: 14px; line-height: 1.5;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
-.appear {
-  animation: fadeIn 0.5s ease both;
-}
+.appear { animation: fadeIn 0.5s ease both; }
 </style>
 </head>
 <body>
 
-<!-- Night dim overlay -->
 <div id="night-overlay">
-  <button class="night-btn" onclick="peekDashboard()" title="Quick glance">👁</button>
+  <button class="night-btn" onclick="peekDashboard()">👁</button>
 </div>
 
-<!-- Ripple background layer -->
-<div class="ripple-layer" id="ripple-layer">
+<div class="ripple-layer">
   <div class="ripple-circle" id="ripple-circle"></div>
 </div>
 
-<!-- Main dashboard -->
 <div class="container" id="app">
   <div class="loading-msg">Fetching weather... 🌤️</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // CONFIG
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 const COMFORT = {
   freezing:  { max: 0,        color: '#1d6af0', status: "Stay inside, it's freezing",  emoji: '🥶', recOpen: false, zone: 'red'    },
   cold:      { max: 10,       color: '#58a6ff', status: "Too cold to open the window",  emoji: '🧥', recOpen: false, zone: 'red'    },
   chilly:    { max: 15,       color: '#7dcfb6', status: "A bit chilly outside",         emoji: '😬', recOpen: false, zone: 'yellow' },
   nice:      { max: 24,       color: '#3fb950', status: "It's nice outside — open it!", emoji: '😊', recOpen: true,  zone: 'green'  },
-  warm:      { max: 28,       color: '#d29922', status: "Warm, maybe a bit stuffy",     emoji: '😅', recOpen: true,  zone: 'yellow' },
+  warm:      { max: 28,       color: '#d29922', status: "Warm, a bit stuffy outside",   emoji: '😅', recOpen: true,  zone: 'yellow' },
   hot:       { max: 34,       color: '#f0883e', status: "It's pretty hot outside",      emoji: '🥵', recOpen: false, zone: 'yellow' },
   scorching: { max: Infinity, color: '#f85149', status: "Way too hot, stay cool",       emoji: '🔥', recOpen: false, zone: 'red'    },
 };
 
-const BAR_TEMPS_C = [-10, 0, 10, 15, 20, 25, 30, 38];
+// Symmetric bar: ideal window is ~15–24°C (59–75°F)
+// We map 0–100% to -10°C → 40°C, peak green at ~20°C center
 const BAR_MIN_C = -10, BAR_MAX_C = 40;
-const NIGHT_HOURS_START = 0;  // midnight
-const NIGHT_HOURS_END   = 6;  // 6 AM
 
-// ═══════════════════════════════════════════════════════
+// Markers shown under bar (in °C, displayed as °F)
+const BAR_MARKERS_C = [-10, 0, 10, 20, 30, 40];
+
+const NIGHT_START = 0, NIGHT_END = 6;
+
+// ═══════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════
-let useFahrenheit = false;
+// ═══════════════════════════════════════
+let useFahrenheit = true;   // DEFAULT °F
 let weatherData   = null;
 let lastUpdated   = null;
-let windowOpen    = false;   // user's window toggle
+let windowOpen    = false;
 let clockTick     = null;
 let nightActive   = false;
 let peekTimeout   = null;
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 const toF  = c => Math.round(c * 9/5 + 32);
 const fmt  = c => useFahrenheit ? toF(c) : Math.round(c);
 const fmtU = () => useFahrenheit ? '°F' : '°C';
-const fmtT = d => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-const fmtM = c => (useFahrenheit ? toF(c) + '°' : c + '°');
+const fmtT = d => d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+const fmtM = c => useFahrenheit ? toF(c) + '°' : c + '°';
 
 function getComfort(tempC) {
-  for (const k of Object.keys(COMFORT)) {
+  for (const k of Object.keys(COMFORT))
     if (tempC < COMFORT[k].max) return { key: k, ...COMFORT[k] };
-  }
-  return { key: 'scorching', ...COMFORT.scorching };
+  return { key:'scorching', ...COMFORT.scorching };
 }
 
+// Symmetric mapping: distance from ideal center (19°C) → bar position
+// Center of bar = 55% (slightly warm-biased visually)
 function barPercent(tempC) {
-  return Math.max(2, Math.min(98, (tempC - BAR_MIN_C) / (BAR_MAX_C - BAR_MIN_C) * 100));
+  const pct = (tempC - BAR_MIN_C) / (BAR_MAX_C - BAR_MIN_C);
+  return Math.max(2, Math.min(98, pct * 100));
 }
 
 function getWindNote(ms) {
@@ -590,131 +452,95 @@ function getWindNote(ms) {
   return '';
 }
 
-// ═══════════════════════════════════════════════════════
-// ALERT STATE — what happens when window is open
-// ═══════════════════════════════════════════════════════
 function getAlertState(comfort) {
-  // Only alert if window is open AND conditions are bad
   if (!windowOpen) return 'none';
-  if (comfort.zone === 'green') return 'none';    // nice, no alert
-  if (comfort.zone === 'yellow') return 'warning'; // slight discomfort
-  return 'danger';                                  // red zone
+  if (comfort.zone === 'green')  return 'none';
+  if (comfort.zone === 'yellow') return 'warning';
+  return 'danger';
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // RIPPLE
-// ═══════════════════════════════════════════════════════
-let rippleInterval = null;
-
+// ═══════════════════════════════════════
 function startRipple(color) {
-  const circle = document.getElementById('ripple-circle');
-  if (!circle) return;
-  circle.style.background = color;
-
-  clearInterval(rippleInterval);
-  // Remove old classes
-  circle.classList.remove('animate-out', 'pulse-bad');
-
-  // Force reflow then start pulsing
-  void circle.offsetWidth;
-  circle.classList.add('pulse-bad');
+  const c = document.getElementById('ripple-circle');
+  if (!c) return;
+  c.style.background = color;
+  c.classList.remove('animate-out','pulse-bad');
+  void c.offsetWidth;
+  c.classList.add('pulse-bad');
 }
-
 function stopRipple() {
-  const circle = document.getElementById('ripple-circle');
-  if (!circle) return;
-  clearInterval(rippleInterval);
-  circle.classList.remove('pulse-bad', 'animate-out');
-  // One last fade-out ripple
-  void circle.offsetWidth;
-  circle.classList.add('animate-out');
-  setTimeout(() => circle.classList.remove('animate-out'), 2400);
+  const c = document.getElementById('ripple-circle');
+  if (!c) return;
+  c.classList.remove('pulse-bad','animate-out');
+  void c.offsetWidth;
+  c.classList.add('animate-out');
+  setTimeout(() => c.classList.remove('animate-out'), 2400);
 }
-
 function triggerOneRipple(color) {
-  const circle = document.getElementById('ripple-circle');
-  if (!circle) return;
-  circle.style.background = color;
-  circle.classList.remove('animate-out', 'pulse-bad');
-  void circle.offsetWidth;
-  circle.classList.add('animate-out');
+  const c = document.getElementById('ripple-circle');
+  if (!c) return;
+  c.style.background = color;
+  c.classList.remove('animate-out','pulse-bad');
+  void c.offsetWidth;
+  c.classList.add('animate-out');
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // WINDOW TOGGLE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 function toggleWindow() {
   windowOpen = !windowOpen;
+  if (!weatherData) return;
+  const comfort = getComfort(weatherData.tempC);
+  const alert   = getAlertState(comfort);
 
-  if (weatherData) {
-    const comfort = getComfort(weatherData.tempC);
-    const alert = getAlertState(comfort);
-
-    if (windowOpen) {
-      // Ripple on open
-      if (alert === 'none') {
-        triggerOneRipple('rgba(63,185,80,1)');
-      } else if (alert === 'warning') {
-        startRipple('rgba(210,153,34,1)');
-      } else {
-        startRipple('rgba(248,81,73,1)');
-      }
-    } else {
-      stopRipple();
-    }
-
-    updateWindowUI(comfort);
+  if (windowOpen) {
+    if      (alert === 'none')    triggerOneRipple('rgba(63,185,80,1)');
+    else if (alert === 'warning') startRipple('rgba(210,153,34,1)');
+    else                          startRipple('rgba(248,81,73,1)');
+  } else {
+    stopRipple();
   }
+  updateWindowUI(comfort);
 }
 
-// ═══════════════════════════════════════════════════════
-// UPDATE JUST THE WINDOW-SENSITIVE UI (no full re-render)
-// ═══════════════════════════════════════════════════════
 function updateWindowUI(comfort) {
-  const alert = getAlertState(comfort);
-  const btn = document.getElementById('win-btn');
-  const badge = document.getElementById('win-badge');
-  const statusCard = document.getElementById('status-card');
-  const winDetailVal = document.getElementById('win-detail-val');
-
+  const alert  = getAlertState(comfort);
+  const btn    = document.getElementById('win-btn');
+  const badge  = document.getElementById('win-badge');
+  const label  = document.getElementById('win-label');
   if (!btn) return;
 
-  // Button state
-  btn.className = 'window-toggle-btn' + (windowOpen ? ' open' : '') + (windowOpen && alert !== 'none' ? ` ${alert}` : '');
+  // Button class
+  btn.className = 'window-toggle-btn'
+    + (windowOpen ? ' open' : '')
+    + (windowOpen && alert !== 'none' ? ` ${alert}` : '');
+
+  // Icon
+  const icon = btn.querySelector('.win-icon');
+  if (icon) icon.textContent = windowOpen ? '🪟' : '🔒';
+
+  // Label — changes with state
+  if (label) label.textContent = windowOpen ? 'Window is Open' : 'Window is Closed';
 
   // Badge
-  if (windowOpen) {
-    if (alert === 'none') {
-      badge.style.background = 'rgba(63,185,80,0.15)';
-      badge.style.color = '#3fb950';
-      badge.textContent = 'OPEN';
-    } else if (alert === 'warning') {
-      badge.style.background = 'rgba(210,153,34,0.15)';
-      badge.style.color = '#d29922';
-      badge.textContent = '⚠ OPEN';
+  if (badge) {
+    if (windowOpen) {
+      if (alert === 'none')         { badge.style.cssText = 'background:rgba(63,185,80,0.15);color:#3fb950';  badge.textContent = 'OPEN'; }
+      else if (alert === 'warning') { badge.style.cssText = 'background:rgba(210,153,34,0.15);color:#d29922'; badge.textContent = '⚠ OPEN'; }
+      else                          { badge.style.cssText = 'background:rgba(248,81,73,0.15);color:#f85149';  badge.textContent = '🔴 OPEN'; }
     } else {
-      badge.style.background = 'rgba(248,81,73,0.15)';
-      badge.style.color = '#f85149';
-      badge.textContent = '🔴 OPEN';
+      badge.style.cssText = 'background:rgba(139,148,158,0.12);color:#8b949e';
+      badge.textContent = 'CLOSED';
     }
-  } else {
-    badge.style.background = 'rgba(139,148,158,0.12)';
-    badge.style.color = '#8b949e';
-    badge.textContent = 'CLOSED';
   }
 
-  // Window detail card bottom
-  if (winDetailVal) {
-    const dotColor = comfort.zone === 'green' ? 'var(--green)' : comfort.zone === 'yellow' ? 'var(--yellow)' : 'var(--red)';
-    winDetailVal.style.color = dotColor;
-    winDetailVal.textContent = comfort.recOpen ? 'Open it!' : 'Keep shut';
-  }
-
-  // Ripple update if conditions changed while window is open
+  // Ripple state sync on weather refresh
   if (windowOpen) {
     const circle = document.getElementById('ripple-circle');
     if (alert === 'none') {
-      // Stop pulsing if we're back to green
       if (circle && circle.classList.contains('pulse-bad')) stopRipple();
     } else if (alert === 'warning') {
       circle.style.background = 'rgba(210,153,34,1)';
@@ -726,77 +552,74 @@ function updateWindowUI(comfort) {
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// FULL RENDER
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
 function render(data) {
   const app = document.getElementById('app');
   const { tempC, feelsLikeC, humidity, windMs, cityName, country, description } = data;
 
-  const comfort   = getComfort(tempC);
-  const alert     = getAlertState(comfort);
+  const comfort    = getComfort(tempC);
+  const alert      = getAlertState(comfort);
   const fullStatus = comfort.status + getWindNote(windMs);
   const dotColor   = comfort.zone === 'green' ? 'var(--green)' : comfort.zone === 'yellow' ? 'var(--yellow)' : 'var(--red)';
   const arrowPct   = barPercent(tempC);
-  const windDisplay = useFahrenheit
+  const windDisp   = useFahrenheit
     ? Math.round(windMs * 2.237) + ' mph'
-    : Math.round(windMs * 3.6) + ' km/h';
+    : Math.round(windMs * 3.6)   + ' km/h';
 
-  // Window button classes
-  const btnClass = 'window-toggle-btn' + (windowOpen ? ' open' : '') + (windowOpen && alert !== 'none' ? ` ${alert}` : '');
+  const btnClass = 'window-toggle-btn'
+    + (windowOpen ? ' open' : '')
+    + (windowOpen && alert !== 'none' ? ` ${alert}` : '');
 
-  // Badge
   let badgeStyle, badgeText;
   if (windowOpen) {
-    if (alert === 'none')         { badgeStyle = 'background:rgba(63,185,80,0.15);color:#3fb950';   badgeText = 'OPEN'; }
-    else if (alert === 'warning') { badgeStyle = 'background:rgba(210,153,34,0.15);color:#d29922';  badgeText = '⚠ OPEN'; }
-    else                          { badgeStyle = 'background:rgba(248,81,73,0.15);color:#f85149';   badgeText = '🔴 OPEN'; }
+    if (alert === 'none')         { badgeStyle='background:rgba(63,185,80,0.15);color:#3fb950';  badgeText='OPEN'; }
+    else if (alert === 'warning') { badgeStyle='background:rgba(210,153,34,0.15);color:#d29922'; badgeText='⚠ OPEN'; }
+    else                          { badgeStyle='background:rgba(248,81,73,0.15);color:#f85149';  badgeText='🔴 OPEN'; }
   } else {
-    badgeStyle = 'background:rgba(139,148,158,0.12);color:#8b949e'; badgeText = 'CLOSED';
+    badgeStyle='background:rgba(139,148,158,0.12);color:#8b949e'; badgeText='CLOSED';
   }
 
   app.innerHTML = `
     <div class="header appear">
       <div>
         <div class="location">📍 ${cityName}, ${country}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px;text-transform:capitalize">${description}</div>
       </div>
-      <div style="text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+      <div class="header-right">
         <div class="time-display" id="clock">${fmtT(new Date())}</div>
         <div class="controls">
-          <div class="unit-toggle">
-            <button onclick="setUnit(false)" class="${!useFahrenheit ? 'active' : ''}">°C</button>
-            <button onclick="setUnit(true)"  class="${useFahrenheit  ? 'active' : ''}">°F</button>
-          </div>
-          <button class="refresh-btn" onclick="refreshWeather()" id="refbtn">↻</button>
+          <button class="refresh-btn" onclick="refreshWeather()" id="refbtn">↻ Refresh</button>
         </div>
       </div>
     </div>
 
-    <div class="temp-card appear" style="animation-delay:0.05s">
-      <div>
-        <div class="temp-big" style="color:${comfort.color}">${fmt(tempC)}<span class="temp-unit">${fmtU()}</span></div>
-        <div class="feels-like">Feels like ${fmt(feelsLikeC)}${fmtU()}</div>
+    <div class="hero appear" style="animation-delay:0.05s">
+      <div class="hero-emoji">${comfort.emoji}</div>
+      <div class="temp-big" style="color:${comfort.color}">${fmt(tempC)}<span class="temp-unit">${fmtU()}</span></div>
+      <div class="hero-sub">
+        <span class="feels-like">Feels like ${fmt(feelsLikeC)}${fmtU()}</span>
+        <div class="hero-divider"></div>
+        <span class="description">${description}</span>
       </div>
-      <div class="temp-emoji">${comfort.emoji}</div>
     </div>
 
-    <div class="status-card appear" id="status-card" style="animation-delay:0.1s">
-      <div class="status-dot" style="background:${dotColor};box-shadow:0 0 10px ${dotColor}"></div>
+    <div class="status-card appear" style="animation-delay:0.1s">
+      <div class="status-dot" style="background:${dotColor};box-shadow:0 0 9px ${dotColor}"></div>
       <div class="status-text">${fullStatus}</div>
     </div>
 
-    <div class="window-toggle-wrap appear" style="animation-delay:0.15s">
+    <div class="window-toggle-wrap appear" style="animation-delay:0.13s">
       <button class="${btnClass}" id="win-btn" onclick="toggleWindow()">
         <span class="win-icon">${windowOpen ? '🪟' : '🔒'}</span>
-        <span class="win-label">${windowOpen ? 'Window is Open' : 'Window is Closed'}</span>
+        <span id="win-label">${windowOpen ? 'Window is Open' : 'Window is Closed'}</span>
         <span class="win-status-badge" id="win-badge" style="${badgeStyle}">${badgeText}</span>
       </button>
     </div>
 
-    <div class="bar-card appear" style="animation-delay:0.2s">
+    <div class="bar-card appear" style="animation-delay:0.17s">
       <div class="bar-label">Comfort Scale</div>
-      <div style="padding:26px 0 4px">
+      <div style="padding:24px 0 3px">
         <div class="bar-track">
           <div class="bar-arrow-wrap" style="left:${arrowPct}%">
             <div class="bar-arrow"></div>
@@ -805,16 +628,16 @@ function render(data) {
         </div>
       </div>
       <div class="bar-markers">
-        ${BAR_TEMPS_C.map(t => `<div class="bar-marker">${fmtM(t)}</div>`).join('')}
+        ${BAR_MARKERS_C.map(t => `<div class="bar-marker">${fmtM(t)}</div>`).join('')}
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:2px">
-        <span style="font-size:10px;color:var(--accent)">🧊 Freeze</span>
+      <div style="display:flex;justify-content:space-between;margin-top:3px">
+        <span style="font-size:10px;color:var(--red)">🧊 Too Cold</span>
         <span style="font-size:10px;color:var(--green)">✅ Ideal</span>
-        <span style="font-size:10px;color:var(--red)">🔥 Scorch</span>
+        <span style="font-size:10px;color:var(--red)">🔥 Too Hot</span>
       </div>
     </div>
 
-    <div class="details-row appear" style="animation-delay:0.25s">
+    <div class="details-row appear" style="animation-delay:0.21s">
       <div class="detail-card">
         <div class="detail-icon">💧</div>
         <div class="detail-value">${humidity}%</div>
@@ -822,82 +645,66 @@ function render(data) {
       </div>
       <div class="detail-card">
         <div class="detail-icon">💨</div>
-        <div class="detail-value" style="font-size:16px">${windDisplay}</div>
+        <div class="detail-value" style="font-size:15px">${windDisp}</div>
         <div class="detail-label">Wind</div>
       </div>
       <div class="detail-card">
         <div class="detail-icon">${comfort.recOpen ? '✅' : '🔒'}</div>
-        <div class="detail-value" id="win-detail-val" style="color:${dotColor};font-size:15px">${comfort.recOpen ? 'Open it!' : 'Keep shut'}</div>
+        <div class="detail-value" style="color:${dotColor};font-size:14px">${comfort.recOpen ? 'Open it!' : 'Keep shut'}</div>
         <div class="detail-label">Suggested</div>
       </div>
     </div>
 
-    <div class="footer appear" style="animation-delay:0.3s">
-      Last updated ${lastUpdated ? fmtT(lastUpdated) : '—'} · Auto-refreshes every 10 min
+    <div class="footer appear" style="animation-delay:0.25s">
+      Updated ${lastUpdated ? fmtT(lastUpdated) : '—'} · Auto-refreshes every 10 min
     </div>
   `;
 
-  // Clock tick
   clearInterval(clockTick);
   clockTick = setInterval(() => {
     const el = document.getElementById('clock');
     if (el) el.textContent = fmtT(new Date());
   }, 15000);
 
-  // Update ripple after re-render if window is open
   updateWindowUI(comfort);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // NIGHT MODE
-// ═══════════════════════════════════════════════════════
-function isNightTime() {
+// ═══════════════════════════════════════
+function isNight() {
   const h = new Date().getHours();
-  return h >= NIGHT_HOURS_START && h < NIGHT_HOURS_END;
+  return h >= NIGHT_START && h < NIGHT_END;
 }
-
 function checkNightMode() {
-  const overlay = document.getElementById('night-overlay');
-  if (isNightTime()) {
-    if (!nightActive) {
-      nightActive = true;
-      overlay.classList.add('active');
-    }
+  const ov = document.getElementById('night-overlay');
+  if (isNight()) {
+    if (!nightActive) { nightActive = true; ov.classList.add('active'); }
   } else {
-    if (nightActive) {
-      nightActive = false;
-      overlay.classList.remove('active', 'peeking');
-    }
+    if (nightActive) { nightActive = false; ov.classList.remove('active','peeking'); }
   }
 }
-
 function peekDashboard() {
-  const overlay = document.getElementById('night-overlay');
-  // Dim the overlay so dashboard is barely visible
-  overlay.classList.remove('active');
-  overlay.classList.add('peeking');
-
-  // After 30 seconds, go back dark
+  const ov = document.getElementById('night-overlay');
+  ov.classList.remove('active');
+  ov.classList.add('peeking');
   clearTimeout(peekTimeout);
   peekTimeout = setTimeout(() => {
-    overlay.classList.remove('peeking');
-    overlay.classList.add('active');
+    ov.classList.remove('peeking');
+    ov.classList.add('active');
   }, 30000);
 }
 
-// ═══════════════════════════════════════════════════════
-// WEATHER FETCH
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
+// FETCH
+// ═══════════════════════════════════════
 async function fetchWeather() {
   const geoRes = await fetch('https://ipapi.co/json/');
   const geo    = await geoRes.json();
   const { latitude, longitude, city, country_code } = geo;
-
   const url  = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&wind_speed_unit=ms`;
-  const wRes = await fetch(url);
-  const w    = await wRes.json();
+  const w    = await (await fetch(url)).json();
   const c    = w.current;
-
   return {
     tempC: c.temperature_2m,
     feelsLikeC: c.apparent_temperature,
@@ -908,68 +715,45 @@ async function fetchWeather() {
     description: codeToDesc(c.weather_code),
   };
 }
-
 function codeToDesc(code) {
-  return ({
-    0:'clear sky',1:'mainly clear',2:'partly cloudy',3:'overcast',
-    45:'foggy',48:'icy fog',
-    51:'light drizzle',53:'drizzle',55:'heavy drizzle',
-    61:'light rain',63:'rain',65:'heavy rain',
-    71:'light snow',73:'snow',75:'heavy snow',
-    80:'rain showers',81:'showers',82:'heavy showers',
-    95:'thunderstorm',96:'thunderstorm with hail',
+  return ({0:'clear sky',1:'mainly clear',2:'partly cloudy',3:'overcast',
+    45:'foggy',48:'icy fog',51:'light drizzle',53:'drizzle',55:'heavy drizzle',
+    61:'light rain',63:'rain',65:'heavy rain',71:'light snow',73:'snow',75:'heavy snow',
+    80:'rain showers',81:'showers',82:'heavy showers',95:'thunderstorm',96:'thunderstorm + hail',
   })[code] || 'current conditions';
-}
-
-// ═══════════════════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════════════════
-function setUnit(fahrenheit) {
-  useFahrenheit = fahrenheit;
-  if (weatherData) render(weatherData);
 }
 
 async function refreshWeather() {
   const btn = document.getElementById('refbtn');
-  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+  if (btn) { btn.textContent = '↻ ...'; btn.disabled = true; }
   try {
     weatherData = await fetchWeather();
     lastUpdated = new Date();
     render(weatherData);
-  } catch (e) {
+  } catch(e) {
     document.getElementById('app').innerHTML = `
       <div class="error-msg">⚠️ Couldn't load weather.<br>Check your connection.<br><small>${e.message}</small></div>
-      <button class="refresh-btn" onclick="refreshWeather()" style="margin-top:12px;padding:10px 20px">↻ Try again</button>
-    `;
+      <button class="refresh-btn" onclick="refreshWeather()" style="margin-top:12px;padding:10px 20px">↻ Try again</button>`;
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 (async () => {
   checkNightMode();
-  setInterval(checkNightMode, 60 * 1000); // check every minute
-
+  setInterval(checkNightMode, 60000);
   try {
     weatherData = await fetchWeather();
     lastUpdated = new Date();
     render(weatherData);
-
-    // Auto-refresh every 10 min
     setInterval(async () => {
-      try {
-        weatherData = await fetchWeather();
-        lastUpdated = new Date();
-        render(weatherData);
-      } catch (_) {}
+      try { weatherData = await fetchWeather(); lastUpdated = new Date(); render(weatherData); } catch(_) {}
     }, 10 * 60 * 1000);
-
-  } catch (e) {
+  } catch(e) {
     document.getElementById('app').innerHTML = `
       <div class="error-msg">⚠️ Couldn't load weather data.<br>Make sure you're connected to the internet.<br><small>${e.message}</small></div>
-      <button class="refresh-btn" onclick="refreshWeather()" style="margin-top:12px;padding:10px 20px">↻ Try again</button>
-    `;
+      <button class="refresh-btn" onclick="refreshWeather()" style="margin-top:12px;padding:10px 20px">↻ Try again</button>`;
   }
 })();
 </script>
