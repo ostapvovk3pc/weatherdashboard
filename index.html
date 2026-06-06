@@ -149,7 +149,7 @@ body {
 .middle {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 300px 1fr;
+  grid-template-columns: 1fr 360px 1fr;
   gap: 14px;
   min-height: 0;
 }
@@ -192,8 +192,8 @@ body {
 }
 
 .planet {
-  width: 260px;
-  height: 260px;
+  width: 340px;
+  height: 340px;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 36%,
     rgba(255,255,255,0.07) 0%,
@@ -212,15 +212,15 @@ body {
 
 .temp-number {
   font-family: 'DM Sans', sans-serif;
-  font-size: 110px;
+  font-size: 193px;
   font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -4px;
+  line-height: 0.9;
+  letter-spacing: -6px;
   transition: color 2s ease;
 }
 .temp-deg {
   font-family: 'DM Sans', sans-serif;
-  font-size: 38px;
+  font-size: 60px;
   font-weight: 700;
   vertical-align: super;
   color: rgba(255,255,255,0.3);
@@ -382,7 +382,7 @@ body {
 }
 .bar-arrow-line { width:2px; height:22px; background:rgba(255,255,255,0.25); }
 .bar-markers { display:flex; justify-content:space-between; margin-bottom:5px; }
-.bar-marker { font-size:13px; color:#6a7480; font-variant-numeric:tabular-nums; }
+.bar-marker { font-size:17px; font-weight:600; color:#8b949e; font-variant-numeric:tabular-nums; }
 .bar-legend { display:flex; justify-content:space-between; }
 .bar-legend span { font-size:12px; }
 
@@ -517,13 +517,19 @@ body {
 // CONFIG
 // ═══════════════════════════════════
 const COMFORT = {
-  freezing:  { max:0,        color:'#1d6af0', glowRgb:'29,106,240',   status:"Stay inside, it's freezing",  emoji:'🥶', recOpen:false, zone:'red'    },
-  cold:      { max:10,       color:'#58a6ff', glowRgb:'88,166,255',   status:"Too cold to open the window",  emoji:'🧥', recOpen:false, zone:'red'    },
-  chilly:    { max:15,       color:'#7dcfb6', glowRgb:'125,207,182',  status:"A bit chilly outside",         emoji:'😬', recOpen:false, zone:'yellow' },
-  nice:      { max:24,       color:'#3fb950', glowRgb:'63,185,80',    status:"It's nice outside — open it!", emoji:'😊', recOpen:true,  zone:'green'  },
-  warm:      { max:28,       color:'#d29922', glowRgb:'210,153,34',   status:"Warm, a bit stuffy outside",   emoji:'😅', recOpen:true,  zone:'yellow' },
-  hot:       { max:34,       color:'#f0883e', glowRgb:'240,136,62',   status:"It's pretty hot outside",      emoji:'🥵', recOpen:false, zone:'yellow' },
-  scorching: { max:Infinity, color:'#f85149', glowRgb:'248,81,73',    status:"Way too hot, stay cool",       emoji:'🔥', recOpen:false, zone:'red'    },
+  // < 68°F — too cold, red
+  freezing:  { max:-10,      color:'#1d6af0', glowRgb:'29,106,240',  status:"Stay inside, it's freezing",   emoji:'🥶', recOpen:false, zone:'red'    },
+  cold:      { max:4.4,      color:'#58a6ff', glowRgb:'88,166,255',  status:"Too cold to open the window",   emoji:'🧥', recOpen:false, zone:'red'    },
+  chilly:    { max:20,       color:'#7dcfb6', glowRgb:'125,207,182', status:"Too cold outside",              emoji:'😬', recOpen:false, zone:'red'    },
+  // 68–71°F (20–21.7°C) — yellow low
+  coolish:   { max:21.7,     color:'#d29922', glowRgb:'210,153,34',  status:"A little cool outside",         emoji:'🙂', recOpen:false, zone:'yellow' },
+  // 72–78°F (22.2–25.6°C) — green sweet spot
+  nice:      { max:25.6,     color:'#3fb950', glowRgb:'63,185,80',   status:"It's nice outside — open it!",  emoji:'😊', recOpen:true,  zone:'green'  },
+  // 78–85°F (25.6–29.4°C) — yellow warm
+  warm:      { max:29.4,     color:'#d29922', glowRgb:'210,153,34',  status:"Warm, a bit stuffy outside",    emoji:'😅', recOpen:true,  zone:'yellow' },
+  // > 85°F — too hot, red
+  hot:       { max:34,       color:'#f0883e', glowRgb:'240,136,62',  status:"It's pretty hot outside",       emoji:'🥵', recOpen:false, zone:'red'    },
+  scorching: { max:Infinity, color:'#f85149', glowRgb:'248,81,73',   status:"Way too hot, stay cool",        emoji:'🔥', recOpen:false, zone:'red'    },
 };
 const NIGHT_START = 0, NIGHT_END = 6;
 
