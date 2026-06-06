@@ -64,23 +64,23 @@ body {
 /* ── NIGHT OVERLAY ── */
 #night-overlay {
   position: fixed; inset: 0;
-  background: #000;
+  background: #000000;
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Start hidden */
   opacity: 0;
   visibility: hidden;
   transition: opacity 1.2s ease, visibility 1.2s ease;
+  /* Isolate so nothing bleeds through */
+  isolation: isolate;
 }
 #night-overlay.active {
   opacity: 1;
   visibility: visible;
 }
-/* Peeking = overlay barely visible so dashboard shows through */
 #night-overlay.peeking {
-  opacity: 0.04;
+  opacity: 0.05;
   visibility: visible;
 }
 
@@ -762,17 +762,20 @@ function isNight() {
 }
 
 function checkNightMode() {
-  const ov = document.getElementById('night-overlay');
+  const ov   = document.getElementById('night-overlay');
+  const glow = document.getElementById('bg-glow');
   if (isNight()) {
     if (!nightActive) {
       nightActive = true;
       ov.classList.add('active');
       ov.classList.remove('peeking');
+      if (glow) glow.style.opacity = '0';
     }
   } else {
     if (nightActive) {
       nightActive = false;
       ov.classList.remove('active', 'peeking');
+      if (glow) glow.style.opacity = '1';
     }
   }
 }
