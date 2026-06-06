@@ -359,11 +359,6 @@ body {
 }
 .bar-track {
   position: relative; height: 18px; border-radius: 100px;
-  background: linear-gradient(to right,
-    #b71c1c 0%, #f85149 8%, #ff9800 18%, #ffc107 28%,
-    #8bc34a 38%, #3fb950 50%,
-    #8bc34a 62%, #ffc107 72%, #ff9800 82%, #f85149 92%, #b71c1c 100%
-  );
   overflow: visible;
   margin-bottom: 8px;
 }
@@ -381,8 +376,8 @@ body {
   filter:drop-shadow(0 1px 4px rgba(0,0,0,0.8));
 }
 .bar-arrow-line { width:2px; height:22px; background:rgba(255,255,255,0.25); }
-.bar-markers { display:flex; justify-content:space-between; margin-bottom:5px; }
-.bar-marker { font-size:17px; font-weight:600; color:#8b949e; font-variant-numeric:tabular-nums; }
+.bar-markers { display:flex; justify-content:space-between; margin-bottom:6px; }
+.bar-marker { font-size:34px; font-weight:700; color:#8b949e; font-variant-numeric:tabular-nums; line-height:1; }
 .bar-legend { display:flex; justify-content:space-between; }
 .bar-legend span { font-size:12px; }
 
@@ -495,7 +490,7 @@ body {
         <span class="bar-label-txt">Comfort Scale</span>
         <span class="bar-label-txt" id="bar-range-label" style="color:#8b949e">—</span>
       </div>
-      <div class="bar-track">
+      <div class="bar-track" id="bar-track">
         <div class="bar-arrow-wrap" id="bar-arrow" style="left:50%">
           <div class="bar-arrow"></div>
           <div class="bar-arrow-line"></div>
@@ -705,18 +700,49 @@ function render(data) {
 
   document.getElementById('desc-val').textContent = description;
 
-  // Bar — scaled to today's actual high/low
+  // Bar — scaled to today's actual high/low with accurate comfort colors
   const lowC  = data.todayLowC;
   const highC = data.todayHighC;
+  const pad   = (highC - lowC) * 0.08;
+  const barMin = lowC - pad;
+  const barMax = highC + pad;
+
+  // Convert a temp (°C) to a 0–100% position on THIS bar
+  const toBarPct = t => Math.max(0, Math.min(100, (t - barMin) / (barMax - barMin) * 100));
+
+  // Comfort zone boundaries in °C (matching COMFORT config)
+  // red below 20°C (<68°F), yellow 20–21.7 (68–71°F), green 21.7–25.6 (72–78°F), yellow 25.6–29.4 (78–85°F), red above
+  const zones = [
+    { upTo: 20,       color: '#f85149' }, // too cold red
+    { upTo: 21.7,     color: '#d29922' }, // coolish yellow
+    { upTo: 25.6,     color: '#3fb950' }, // nice green
+    { upTo: 29.4,     color: '#d29922' }, // warm yellow
+    { upTo: Infinity, color: '#f85149' }, // too hot red
+  ];
+
+  // Build gradient stops based on where zone boundaries fall on the bar
+  let stops = [`${zones[0].color} 0%`];
+  for (let i = 0; i < zones.length - 1; i++) {
+    const boundaryC = zones[i].upTo;
+    if (boundaryC > barMin && boundaryC < barMax) {
+      const pct = toBarPct(boundaryC).toFixed(1);
+      stops.push(`${zones[i].color} ${pct}%`);
+      stops.push(`${zones[i+1].color} ${pct}%`);
+    }
+  }
+  stops.push(`${zones[zones.length-1].color} 100%`);
+  document.getElementById('bar-track').style.background =
+    `linear-gradient(to right, ${stops.join(', ')})`;
+
   document.getElementById('bar-arrow').style.left = barPercent(tempC, lowC, highC) + '%';
-  // Show: low on left, a midpoint, high on right
+
+  // Markers: low, mid, high
   const midC = (lowC + highC) / 2;
   document.getElementById('bar-markers').innerHTML = `
     <div class="bar-marker" style="color:#58a6ff">❄ ${toF(lowC)}°</div>
     <div class="bar-marker">${toF(midC)}°</div>
     <div class="bar-marker" style="color:#f85149">☀ ${toF(highC)}°</div>
   `;
-  // Update legend to show today's range context
   document.getElementById('bar-range-label').textContent =
     `Today's range: ${toF(lowC)}° – ${toF(highC)}°F`;
 
