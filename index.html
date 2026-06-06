@@ -640,8 +640,8 @@ function updateWindowUI(comfort) {
   if (!btn) return;
 
   btn.className = 'card win-card' + (windowOpen ? ' open' : '') + (windowOpen && alert !== 'none' ? ` ${alert}` : '');
-  icon.textContent  = windowOpen ? '🪟' : '🔒';
-  title.textContent = windowOpen ? 'Window is Open' : 'Window is Closed';
+  icon.textContent  = windowOpen ? '' : '🔒';
+  title.textContent = windowOpen ? 'Window is Open :3' : 'Window is Closed';
 
   if (windowOpen) {
     if (alert === 'none')         { badge.style.cssText='background:rgba(63,185,80,0.15);color:#3fb950';  badge.textContent='OPEN'; }
